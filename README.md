@@ -1,71 +1,19 @@
-"""
-rbac_simulation.py
-A simple script demonstrating Authentication and Role-Based Access Control (RBAC).
-"""
+# RBAC and Authentication Mini-App
 
-# Simulated database linking usernames to their specific roles
-USER_DB = {
-    "alice_admin": "admin",
-    "bob_regular": "user"
-}
+## Overview
+This is a basic Python script that demonstrates the core concepts of Authentication and Role-Based Access Control (RBAC). 
 
-def login(username):
-    """
-    Simulates a login process. 
-    Returns a 'session' dictionary if the user exists, or None if they don't.
-    """
-    print(f"\nAttempting to log in as: '{username}'...")
-    if username in USER_DB:
-        print(f"[*] Login successful!")
-        return {"username": username, "role": USER_DB[username]}
-    else:
-        print(f"[!] Login failed: User '{username}' does not exist.")
-        return None
+## How the App Works
+1. **Authentication Simulation:** The `login()` function checks a hardcoded dictionary (`USER_DB`) to see if a provided username exists. If it does, it generates a simulated "session" containing the user's name and assigned role. 
+2. **Role-Based Access Control (RBAC):** Two separate endpoints are created: `access_admin_settings` and `access_user_dashboard`. 
+3. **Enforcement:** Each endpoint inspects the session data. `access_admin_settings` exclusively requires the `"admin"` role, while `access_user_dashboard` exclusively requires the `"user"` role. Any mismatch results in access being denied.
 
-def access_admin_settings(session):
-    """
-    Protected endpoint #1: Strictly for 'admin' roles.
-    """
-    if not session:
-        print("[!] Access Denied: No active session.")
-        return
+## Connection to the CIA Triad
+This application primarily demonstrates **Confidentiality**. 
 
-    # Check if the user has the required 'admin' role
-    if session.get("role") == "admin":
-        print(f"[+] ACCESS GRANTED: Welcome to Admin Settings, {session['username']}.")
-    else:
-        print(f"[-] ACCESS DENIED: {session['username']} lacks 'admin' privileges.")
+In the CIA Triad, Confidentiality ensures that sensitive information is only disclosed to authorized individuals. By implementing RBAC, this script ensures that regular users cannot view or interact with administrative settings, and admins cannot improperly access standard user dashboards. The system restricts access based on the principle of least privilege, keeping the data in those specific functions confidential from unauthorized roles.
 
-def access_user_dashboard(session):
-    """
-    Protected endpoint #2: Strictly for 'user' roles.
-    """
-    if not session:
-        print("[!] Access Denied: No active session.")
-        return
-
-    # Check if the user has the required 'user' role
-    if session.get("role") == "user":
-        print(f"[+] ACCESS GRANTED: Welcome to your Personal Dashboard, {session['username']}.")
-    else:
-        print(f"[-] ACCESS DENIED: {session['username']} is not a standard user.")
-
-def main():
-    print("=== Starting RBAC Simulation ===")
-
-    # 1. Test the Admin User
-    admin_session = login("alice_admin")
-    access_admin_settings(admin_session)   # Should Succeed
-    access_user_dashboard(admin_session)   # Should Fail (only 'user' role allowed here)
-
-    # 2. Test the Standard User
-    user_session = login("bob_regular")
-    access_admin_settings(user_session)    # Should Fail (only 'admin' role allowed here)
-    access_user_dashboard(user_session)    # Should Succeed
-
-    # 3. Test an Invalid/Unauthenticated User
-    hacker_session = login("eve_hacker")
-    access_admin_settings(hacker_session)  # Should Fail (no session)
-
-if __name__ == "__main__":
-    main()
+## How to Run
+1. Ensure you have Python installed on your machine.
+2. Run the script from your terminal: `python rbac_simulation.py`
+3. Observe the console output to see how access is granted or denied based on the hardcoded roles.
